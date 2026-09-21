@@ -154,11 +154,6 @@ bmstu-sob[legacy10]       30/10/20/20  <- только при явном лок�
 
 В архиве есть:
 
-```text
-install-texlive-local.bat
-uninstall-texlive-local.bat
-```
-
 Рекомендуемый путь установки определяется из `kpsewhich -var-value=TEXMFLOCAL`; скрипт помещает пакет в локальное дерево `tex/latex/bmstu-sob/` и запускает `mktexlsr`.
 
 Ручная проверка после установки:
