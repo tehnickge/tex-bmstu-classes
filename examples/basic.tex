@@ -1,0 +1,82 @@
+\documentclass{bmstu-sob}
+
+\begin{document}
+
+\tableofcontents
+
+\bmstuIntroduction
+
+Это проверочный текст класса \texttt{bmstu-sob}. Основной шрифт — Times New Roman, размер 14 пт, межстрочный интервал полуторный. Абзацный отступ составляет 1,25 см.
+
+\section{Тестовая секция}
+Текст основной секции. По требованиям отчёта новый раздел начинается с новой страницы.
+
+\subsection{Тестовый подраздел}
+Текст подраздела.
+
+\subsubsection{Тестовый пункт}
+Текст пункта.
+
+\paragraph{Пункт с заголовком}
+Этот уровень является run-in заголовком и не создаёт большой вертикальный пробел.
+
+\begin{itemize}
+  \item первый элемент;
+  \item второй элемент.
+\end{itemize}
+
+\begin{enumerate}
+  \item первый элемент;
+  \item второй элемент.
+\end{enumerate}
+
+\begin{equation}
+  A = \frac{B}{C}
+  \label{eq:test}
+\end{equation}
+
+\begin{bmstuwherelist}
+  \bmstuwhereline{$B$ — числитель;}
+  \bmstuwhereline{$C$ — знаменатель.}
+\end{bmstuwherelist}
+
+Ссылка на формулу: \eqrefn{eq:test}.
+
+\begin{figure}[htbp]
+  \centering
+  \fbox{\rule{0pt}{35mm}\rule{75mm}{0pt}}
+  \caption{Проверочный рисунок}
+  \label{fig:test}
+\end{figure}
+
+\begin{table}[htbp]
+  \caption{Проверочная таблица}
+  \label{tab:test}
+  \centering
+  \begin{tabular}{ll}
+    Параметр & Значение \\
+    A & 10 \\
+    B & 20 \\
+  \end{tabular}
+  \bmstuTableNote{пример примечания к таблице.}
+\end{table}
+
+\bmstuConclusion
+
+Проверочный текст заключения.
+
+\bmstuReferencesTitle
+
+\begin{bmstubibliography}
+  \bmstubibitem{1}{Иванов И. И. Пример библиографического описания. Москва : Пример, 2024.}
+\end{bmstubibliography}
+
+\appendix
+\bmstuAppendix{Проверочное приложение}
+
+Текст приложения.
+
+\section{Раздел приложения}
+Текст раздела приложения.
+
+\end{document}
