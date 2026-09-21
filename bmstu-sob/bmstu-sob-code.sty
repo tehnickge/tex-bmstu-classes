@@ -1,0 +1,44 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bmstu-sob-code}[2026/09/21 v1.1.0 Program listings]
+
+\makeatletter
+\RequirePackage{listings}
+\RequirePackage{xcolor}
+
+% Code uses the requested Courier New family. 12 pt is kept separate from the
+% 14 pt body text and can be changed locally with a listings option if needed.
+\lstdefinestyle{bmstusob}{%
+  basicstyle=\bmstusob@codefont\fontsize{12}{14.4}\selectfont,
+  keywordstyle=\normalfont,
+  commentstyle=\normalfont,
+  stringstyle=\normalfont,
+  identifierstyle=\normalfont,
+  numberstyle=\bmstusob@codefont\fontsize{10}{12}\selectfont,
+  showstringspaces=false,
+  keepspaces=true,
+  columns=flexible,
+  breaklines=true,
+  breakatwhitespace=false,
+  postbreak=\mbox{\textemdash\space},
+  frame=none,
+  numbers=none,
+  numbersep=8pt,
+  xleftmargin=0pt,
+  xrightmargin=0pt,
+  aboveskip=\baselineskip,
+  belowskip=\baselineskip,
+  inputencoding=utf8,
+  extendedchars=true,
+  upquote=true
+}
+\lstset{style=bmstusob}
+
+\lstdefinelanguage{PostgreSQL}[]{SQL}{morekeywords={ILIKE,RETURNING,SERIAL,BIGSERIAL,JSONB,UUID,BOOLEAN,WITH,RECURSIVE,WINDOW,OVER,PARTITION,UPSERT,ON,CONFLICT,DO}}
+
+\lstnewenvironment{bmstucode}[1][]{%
+  \lstset{style=bmstusob,#1}%
+}{}
+
+\newcommand{\bmstuinlinecode}[1]{{\bmstusob@codefont #1}}
+\makeatother
+\endinput

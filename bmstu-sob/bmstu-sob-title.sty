@@ -1,0 +1,29 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bmstu-sob-title}[2026/09/21 v1.1.0 Title-page helper]
+
+\makeatletter
+\newenvironment{bmstutitlepage}{%
+  \clearpage
+  \thispagestyle{bmstu-firstpage}%
+  \begingroup
+  \setlength{\parindent}{0pt}%
+  \fontsize{14}{21}\selectfont\bmstusob@mainfont
+}{%
+  \par\endgroup\clearpage
+}
+
+% A small helper for institution/title blocks. The detailed mandatory BMSTU
+% title-page form is intentionally left to the current faculty/program form.
+\newcommand{\bmstuTitleBlock}[4]{%
+  \begin{center}
+    #1\par
+    \vspace{1.5\baselineskip}
+    #2\par
+    \vfill
+    {\bfseries #3\par}
+    \vspace{1.5\baselineskip}
+    #4\par
+  \end{center}
+}
+\makeatother
+\endinput

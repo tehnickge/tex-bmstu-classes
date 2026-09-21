@@ -1,0 +1,61 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bmstu-sob-refs}[2026/09/21 v1.1.0 Cross references and bibliography integration]
+
+\makeatletter
+\ifbmstusob@biblatex
+  \RequirePackage{csquotes}
+  \RequirePackage[
+    backend=biber,
+    style=gost-numeric,
+    sorting=none,
+    autolang=other
+  ]{biblatex}
+\fi
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage{cleveref}
+
+\hypersetup{%
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black,
+  pdfborder={0 0 0}
+}
+
+\crefname{figure}{рисунок}{рисунки}
+\Crefname{figure}{Рисунок}{Рисунки}
+\crefname{table}{таблица}{таблицы}
+\Crefname{table}{Таблица}{Таблицы}
+\crefname{equation}{формула}{формулы}
+\Crefname{equation}{Формула}{Формулы}
+\crefname{section}{раздел}{разделы}
+\Crefname{section}{Раздел}{Разделы}
+
+\newcommand{\figref}[1]{рисунок~\ref{#1}}
+\newcommand{\tabref}[1]{таблица~\ref{#1}}
+\newcommand{\eqrefn}[1]{(\ref{#1})}
+\newcommand{\secref}[1]{раздел~\ref{#1}}
+\newcommand{\appref}[1]{приложение~\ref{#1}}
+
+% Plain LaTeX and biblatex-gost both use the same basic user-facing \cite form.
+\newcommand{\bmstucite}[1]{\cite{#1}}
+
+% Simple manual bibliography environment. It controls list appearance only;
+% each bibliographic description remains the responsibility of the author and
+% must follow GOST R 7.0.100-2018.
+\newenvironment{bmstubibliography}{%
+  \begin{list}{}{%
+    \leftmargin=12.5mm
+    \labelwidth=2.0em
+    \labelsep=0.5em
+    \itemindent=0pt
+    \parsep=0pt
+    \topsep=0pt
+    \itemsep=0pt
+    \listparindent=0pt
+  }%
+}{\end{list}}
+\newcommand{\bmstubibitem}[2]{\item[#1.] #2}
+
+\makeatother
+\endinput

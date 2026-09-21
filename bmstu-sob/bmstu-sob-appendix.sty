@@ -1,0 +1,85 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bmstu-sob-appendix}[2026/09/21 v1.1.0 Appendix support]
+
+\makeatletter
+\RequirePackage{etoolbox}
+
+\newcounter{bmstuappendix}
+% GOST 7.32-2017 uses Cyrillic appendix letters, excluding Ё, З, Й, О, Ч, Ъ, Ы, Ь.
+\newcommand{\bmstu@appendixletter}[1]{%
+  \ifcase#1
+  \or А\or Б\or В\or Г\or Д\or Е\or Ж\or И\or К\or Л\or М\or Н\or П\or Р\or С\or Т\or У\or Ф\or Х\or Ц\or Ш\or Щ\or Э\or Ю\or Я
+  \else \number#1\fi
+}
+\renewcommand{\thebmstuappendix}{\bmstu@appendixletter{\value{bmstuappendix}}}
+
+% Separate page headed "ПРИЛОЖЕНИЯ" before the actual application pages.
+\newcommand{\bmstuAppendices}{%
+  \clearpage
+  \phantomsection
+  {\centering\bfseries
+   \ifbmstusob@headingSixteen\fontsize{16}{24}\else\fontsize{14}{21}\fi\selectfont
+   \bmstusob@mainfont
+   ПРИЛОЖЕНИЯ\par}
+  \vspace{1.5\baselineskip}
+  \addcontentsline{toc}{section}{ПРИЛОЖЕНИЯ}%
+  \clearpage
+  \setcounter{bmstuappendix}{0}%
+  \setcounter{section}{0}%
+  \setcounter{subsection}{0}%
+  \setcounter{subsubsection}{0}%
+  \setcounter{paragraph}{0}%
+  \setcounter{subparagraph}{0}%
+  \setcounter{figure}{0}%
+  \setcounter{table}{0}%
+  \setcounter{equation}{0}%
+  \bmstusob@inappendixtrue
+}
+\let\appendix\bmstuAppendices
+
+% One application. Optional argument is the text used in the TOC; if omitted,
+% the full title is used. The command also makes \ref point to its letter.
+\newcommand{\bmstuAppendix}[2][]{%
+  \clearpage
+  \stepcounter{bmstuappendix}%
+  \setcounter{section}{0}%
+  \setcounter{subsection}{0}%
+  \setcounter{subsubsection}{0}%
+  \setcounter{paragraph}{0}%
+  \setcounter{subparagraph}{0}%
+  \setcounter{figure}{0}%
+  \setcounter{table}{0}%
+  \setcounter{equation}{0}%
+  \edef\bmstu@appletter{\bmstu@appendixletter{\value{bmstuappendix}}}%
+  \renewcommand{\thesection}{\bmstu@appletter.\arabic{section}}%
+  \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}%
+  \renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}%
+  \renewcommand{\theparagraph}{\thesubsubsection.\arabic{paragraph}}%
+  \renewcommand{\thesubparagraph}{\theparagraph.\arabic{subparagraph}}%
+  \renewcommand{\thefigure}{\bmstu@appletter.\arabic{figure}}%
+  \renewcommand{\thetable}{\bmstu@appletter.\arabic{table}}%
+  \renewcommand{\theequation}{\bmstu@appletter.\arabic{equation}}%
+  \renewcommand{\theHsection}{app.\bmstu@appletter.\arabic{section}}%
+  \renewcommand{\theHfigure}{app.\bmstu@appletter.\arabic{figure}}%
+  \renewcommand{\theHtable}{app.\bmstu@appletter.\arabic{table}}%
+  \renewcommand{\theHequation}{app.\bmstu@appletter.\arabic{equation}}%
+  \phantomsection
+  \edef\@currentlabel{\thebmstuappendix}%
+  \setcounter{section}{0}%
+  {\centering\bfseries\fontsize{14}{21}\selectfont\bmstusob@mainfont
+    ПРИЛОЖЕНИЕ~\bmstu@appletter\par}
+  \vspace{1\baselineskip}
+  {\centering\bfseries\fontsize{14}{21}\selectfont\bmstusob@mainfont
+    \hyphenpenalty=10000\exhyphenpenalty=10000 #2\par}
+  \vspace{1.5\baselineskip}
+  \addcontentsline{toc}{section}{ПРИЛОЖЕНИЕ~\bmstu@appletter\space #2}%
+  \edef\@currentlabel{\thebmstuappendix}%
+  \ignorespaces
+}
+
+\newcommand{\bmstuAppendixLabel}[1]{% Allows a stable ref value without parsing title text.
+  \label{#1}%
+}
+
+\makeatother
+\endinput

@@ -1,0 +1,124 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bmstu-sob-headings}[2026/09/21 v1.1.0 BMSTU/GOST headings]
+
+\makeatletter
+\RequirePackage{titlesec}
+\RequirePackage{titletoc}
+\RequirePackage{tocloft}
+\RequirePackage{etoolbox}
+
+\newcommand{\bmstusob@headingstyle}{%
+  \bfseries
+  \ifbmstusob@headingSixteen
+    \fontsize{16}{24}\selectfont
+  \else
+    \fontsize{14}{21}\selectfont
+  \fi
+  \bmstusob@mainfont
+  \hyphenpenalty=10000
+  \exhyphenpenalty=10000
+  \tolerance=9999
+  \justifying
+}
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+\renewcommand{\theparagraph}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}.\arabic{paragraph}}
+\renewcommand{\thesubparagraph}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}.\arabic{paragraph}.\arabic{subparagraph}}
+
+% Sections of the main part start on a new page. Headings are numbered and the
+% title follows the number after a space. No punctuation is added automatically.
+\pretocmd{\section}{\ifbmstusob@inappendix\else\clearpage\fi}{}{}
+
+\titleformat{\section}[block]
+  {\bmstusob@headingstyle}
+  {\thesection}
+  {0.5em}
+  {}
+\titlespacing*{\section}{0pt}{0pt}{1.5\baselineskip}
+
+\titleformat{\subsection}[block]
+  {\bmstusob@headingstyle}
+  {\thesubsection}
+  {0.5em}
+  {}
+\titlespacing*{\subsection}{0pt}{1\baselineskip}{1\baselineskip}
+
+\titleformat{\subsubsection}[block]
+  {\bmstusob@headingstyle}
+  {\thesubsubsection}
+  {0.5em}
+  {}
+\titlespacing*{\subsubsection}{0pt}{1\baselineskip}{1\baselineskip}
+
+% Points and subpoints may have headings, but they are not forced to start a
+% new block and do not create large vertical gaps.
+\titleformat{\paragraph}[runin]
+  {\bmstusob@headingstyle}
+  {\theparagraph}
+  {0.5em}
+  {}
+\titlespacing*{\paragraph}{0pt}{1\baselineskip}{0.75em}
+
+\titleformat{\subparagraph}[runin]
+  {\bmstusob@headingstyle}
+  {\thesubparagraph}
+  {0.5em}
+  {}
+\titlespacing*{\subparagraph}{0pt}{1\baselineskip}{0.75em}
+
+% Structural elements: centered, uppercase, bold, no numbering, no underline.
+\newcommand{\bmstu@structural}[1]{%
+  \clearpage
+  \phantomsection
+  {\centering\bfseries
+   \ifbmstusob@headingSixteen\fontsize{16}{24}\else\fontsize{14}{21}\fi\selectfont
+   \bmstusob@mainfont
+   #1\par}
+  \vspace{1.5\baselineskip}
+  \addcontentsline{toc}{section}{#1}%
+  \ignorespaces
+}
+
+\renewcommand{\contentsname}{СОДЕРЖАНИЕ}
+\renewcommand{\listfigurename}{СПИСОК РИСУНКОВ}
+\renewcommand{\listtablename}{СПИСОК ТАБЛИЦ}
+
+\renewcommand{\tableofcontents}{%
+  \clearpage
+  \phantomsection
+  {\centering\bfseries
+   \ifbmstusob@headingSixteen\fontsize{16}{24}\else\fontsize{14}{21}\fi\selectfont
+   \bmstusob@mainfont
+   \contentsname\par}
+  \vspace{1.5\baselineskip}
+  \@starttoc{toc}%
+}
+
+\newcommand{\bmstuIntroduction}{\bmstu@structural{ВВЕДЕНИЕ}}
+\newcommand{\bmstuConclusion}{\bmstu@structural{ЗАКЛЮЧЕНИЕ}}
+\newcommand{\bmstuReferencesTitle}{\bmstu@structural{СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ}}
+\newcommand{\bmstuAbstract}{\bmstu@structural{РЕФЕРАТ}}
+\newcommand{\bmstuDefinitionsTitle}{\bmstu@structural{ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ}}
+\newcommand{\bmstuAbbreviationsTitle}{\bmstu@structural{ПЕРЕЧЕНЬ СОКРАЩЕНИЙ И ОБОЗНАЧЕНИЙ}}
+
+% TOC in the same 14 pt TNR body family.
+\renewcommand{\cftsecfont}{\normalfont\fontsize{14}{21}\selectfont\bmstusob@mainfont}
+\renewcommand{\cftsecpagefont}{\normalfont\fontsize{14}{21}\selectfont\bmstusob@mainfont}
+\renewcommand{\cftsubsecfont}{\normalfont\fontsize{14}{21}\selectfont\bmstusob@mainfont}
+\renewcommand{\cftsubsecpagefont}{\normalfont\fontsize{14}{21}\selectfont\bmstusob@mainfont}
+\renewcommand{\cftsubsubsecfont}{\normalfont\fontsize{14}{21}\selectfont\bmstusob@mainfont}
+\renewcommand{\cftsubsubsecpagefont}{\normalfont\fontsize{14}{21}\selectfont\bmstusob@mainfont}
+\setlength{\cftbeforesecskip}{0pt}
+\setlength{\cftbeforesubsecskip}{0pt}
+\setlength{\cftbeforesubsubsecskip}{0pt}
+\cftsetindents{section}{0em}{3.0em}
+\cftsetindents{subsection}{1.5em}{4.0em}
+\cftsetindents{subsubsection}{3.5em}{5.0em}
+\renewcommand{\cftdotsep}{1.5}
+\renewcommand{\@pnumwidth}{2.2em}
+\renewcommand{\@tocrmarg}{3.0em}
+
+\makeatother
+\endinput

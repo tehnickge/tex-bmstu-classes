@@ -1,0 +1,82 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bmstu-sob-floats}[2026/09/21 v1.1.0 Figures, tables and notes]
+
+\makeatletter
+\RequirePackage{graphicx}
+\RequirePackage{float}
+\RequirePackage{caption}
+\RequirePackage{longtable}
+\RequirePackage{array}
+\RequirePackage{tabularx}
+\RequirePackage{makecell}
+\RequirePackage{microtype}
+\RequirePackage{etoolbox}
+
+\DeclareCaptionLabelSeparator{bmstudash}{\space\textendash\space}
+\DeclareCaptionFont{bmstucaptionfont}{\fontsize{14}{21}\selectfont\bmstusob@mainfont}
+\captionsetup{%
+  font=bmstucaptionfont,
+  labelfont=normalfont,
+  textfont=normalfont,
+  labelsep=bmstudash,
+  singlelinecheck=false,
+  skip=6pt
+}
+\captionsetup[figure]{justification=centering}
+\captionsetup[table]{justification=raggedright}
+
+\renewcommand{\figurename}{Рисунок}
+\renewcommand{\tablename}{Таблица}
+\renewcommand{\thefigure}{\arabic{figure}}
+\renewcommand{\thetable}{\arabic{table}}
+
+% Tables may use smaller type; this is a permitted exception, not a new body font.
+\newcommand{\bmstutablefont}{\fontsize{12}{14.4}\selectfont\bmstusob@mainfont}
+\AtBeginEnvironment{tabular}{\bmstutablefont\renewcommand{\arraystretch}{1}}
+\AtBeginEnvironment{tabularx}{\bmstutablefont\renewcommand{\arraystretch}{1}}
+\AtBeginEnvironment{longtable}{\bmstutablefont\renewcommand{\arraystretch}{1}}
+
+% Do not force all X columns to be centered. Alignment belongs to the table author.
+\renewcommand{\tabularxcolumn}[1]{p{#1}}
+
+\newenvironment{bmstufigure}[1][htbp]{%
+  \begin{figure}[#1]\centering
+}{%
+  \end{figure}
+}
+
+\newenvironment{bmstutable}[1][htbp]{%
+  \begin{table}[#1]
+}{%
+  \end{table}
+}
+
+% One note is unnumbered; several notes can be numbered.
+\newcommand{\bmstunote}[1]{%
+  \par\noindent\hspace*{12.5mm}%
+  {\fontsize{12}{18}\selectfont\bmstusob@mainfont
+   \textls[100]{Примечание}\textendash\space #1\par}%
+}
+
+\newcounter{bmstunote}
+\newenvironment{bmstunotes}{%
+  \par\noindent\hspace*{12.5mm}%
+  {\fontsize{12}{18}\selectfont\bmstusob@mainfont
+   \textls[100]{Примечания}\par}%
+  \setcounter{bmstunote}{0}%
+  \begin{list}{\arabic{bmstunote}}{%
+    \usecounter{bmstunote}%
+    \leftmargin=12.5mm\rightmargin=0pt\labelwidth=0pt\labelsep=0.5em%
+    \itemindent=0pt\listparindent=12.5mm\parsep=0pt\topsep=0pt\itemsep=0pt%
+    \fontsize{12}{18}\selectfont\bmstusob@mainfont
+  }
+}{\end{list}}
+\newcommand{\bmstunumberednote}[1]{\item #1}
+
+% Explicit table-note helper; intended to be placed after the tabular material.
+\newcommand{\bmstuTableNote}[1]{%
+  {\fontsize{12}{18}\selectfont\bmstusob@mainfont\noindent\textls[100]{Примечание}\textendash\space #1\par}%
+}
+
+\makeatother
+\endinput

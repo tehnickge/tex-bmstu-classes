@@ -1,0 +1,44 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bmstu-sob-math}[2026/09/21 v1.1.0 Formula and equation style]
+
+\RequirePackage{amsmath}
+\RequirePackage{mathtools}
+
+% One free body line above and below displayed formulas.
+\setlength{\abovedisplayskip}{21pt}
+\setlength{\belowdisplayskip}{21pt}
+\setlength{\abovedisplayshortskip}{21pt}
+\setlength{\belowdisplayshortskip}{21pt}
+
+% BMSTU 2024 and GOST allow/require consecutive numbering of report formulas.
+\renewcommand{\theequation}{\arabic{equation}}
+
+% Explanation block: first line begins with "где" (without a colon),
+% subsequent symbols are listed one per line.
+\newenvironment{bmstuwherelist}{%
+  \par\noindent\begin{list}{}{%
+    \leftmargin=12.5mm
+    \labelwidth=0pt
+    \labelsep=0pt
+    \itemindent=0pt
+    \parsep=0pt
+    \topsep=0pt
+    \itemsep=0pt
+    \listparindent=0pt
+  }\item[] где\hspace{0.5em}\ignorespaces
+}{%
+  \end{list}\par
+}
+
+\newcommand{\bmstuwhereline}[1]{\par\noindent\hspace*{12.5mm}#1}
+
+% Optional compact helper: use like normal equation environment and put a
+% separate bmstuwherelist directly after it when symbol explanations are needed.
+\newenvironment{bmstuequationwhere}[1][]{%
+  \begin{equation}
+  \ifx\relax#1\relax\else\label{#1}\fi
+}{%
+  \end{equation}
+}
+
+\endinput

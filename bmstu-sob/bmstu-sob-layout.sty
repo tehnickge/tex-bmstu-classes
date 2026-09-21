@@ -1,0 +1,68 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bmstu-sob-layout}[2026/09/21 v1.1.0 Page and paragraph layout]
+
+\makeatletter
+\RequirePackage{geometry}
+\RequirePackage{setspace}
+\RequirePackage{xcolor}
+\RequirePackage[main=russian,english]{babel}
+\RequirePackage{ragged2e}
+\RequirePackage{fancyhdr}
+\RequirePackage{footmisc}
+\RequirePackage{etoolbox}
+
+% Russian is the primary document language; English remains available.
+\selectlanguage{russian}
+
+% Current BMSTU profile and GOST 7.32-2017: 30/15/20/20 mm.
+% [legacy10] is retained only for older or local departmental instructions.
+\ifbmstusob@legacyten
+  \geometry{a4paper,left=30mm,right=10mm,top=20mm,bottom=20mm,footskip=12.5mm}
+\else
+  \geometry{a4paper,left=30mm,right=15mm,top=20mm,bottom=20mm,footskip=12.5mm}
+\fi
+
+\AtBeginDocument{%
+  \color{black}%
+  \fontsize{14pt}{21pt}\selectfont
+  \onehalfspacing
+  \setlength{\parindent}{12.5mm}%
+  \setlength{\parskip}{0pt}%
+  \justifying
+  \setlength{\emergencystretch}{2em}%
+  \setlength{\headheight}{14pt}%
+  \interlinepenalty=9000
+  \clubpenalty=10000
+  \widowpenalty=10000
+  \displaywidowpenalty=10000
+  \brokenpenalty=10000
+}
+
+% Footer: only the page number, centered at the bottom.
+\fancyhf{}
+\fancyhead{}
+\fancyfoot[C]{\normalfont\fontsize{14}{21}\selectfont\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\pagestyle{fancy}
+
+% Title page can be counted without displaying its number.
+\fancypagestyle{bmstu-firstpage}{%
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+\newcommand{\bmstuSuppressPageNumber}{\thispagestyle{bmstu-firstpage}}
+
+% Footnotes are intentionally smaller than body text; no visual embellishment.
+\setlength{\footnotemargin}{12.5mm}
+\setlength{\skip\footins}{10pt plus 2pt minus 2pt}
+\renewcommand{\footnotelayout}{\fontsize{12}{18}\selectfont}
+
+\raggedbottom
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+\newcommand{\bmstulanguage}[1]{\foreignlanguage{#1}}
+\makeatother
+\endinput
