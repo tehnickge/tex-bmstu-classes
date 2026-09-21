@@ -1,29 +1,315 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{bmstu-sob-title}[2026/09/21 v1.1.0 Title-page helper]
+\ProvidesPackage{bmstu-sob-title}[2026/09/21 v1.2.1 BMSTU-style title pages]
+
+% --------------------------------------------------------------------------
+% Title-page module for bmstu-sob.
+%
+% The structure and public command interface are adapted from the title-page
+% module of the bmstu package by Mikael Novikov (Orianti/bmstu-latex-class).
+% The implementation below is integrated with bmstu-sob's XeLaTeX/LuaLaTeX,
+% Times New Roman, page layout and current BMSTU wording.
+% --------------------------------------------------------------------------
+
+\RequirePackage[normalem]{ulem}
+\RequirePackage{stackengine}
+\RequirePackage{pgffor}
+\RequirePackage{tabularx}
+\RequirePackage{array}
+\RequirePackage{amsmath}
+\RequirePackage{setspace}
+\RequirePackage{etoolbox}
+\RequirePackage{xifthen}
+\RequirePackage{graphicx}
 
 \makeatletter
-\newenvironment{bmstutitlepage}{%
-  \clearpage
-  \thispagestyle{bmstu-firstpage}%
-  \begingroup
-  \setlength{\parindent}{0pt}%
-  \fontsize{14}{21}\selectfont\bmstusob@mainfont
-}{%
-  \par\endgroup\clearpage
+
+% bmstu-sob defines this font family in the main class.
+\providecommand{\bmstusob@mainfont}{\normalfont}
+
+% Hyperref is loaded by bmstu-sob-refs. Keep the title module usable on its own.
+\@ifpackageloaded{hyperref}{}{\RequirePackage[hidelinks]{hyperref}}
+
+% --------------------------------------------------------------------------
+% PDF metadata
+% --------------------------------------------------------------------------
+\providecommand{\documentmeta}[4]{%
+	\hypersetup{%
+		pdftitle={#1 #2 #3},%
+		pdfsubject={#4},%
+		pdfauthor={#2}%
+	}%
 }
 
-% A small helper for institution/title blocks. The detailed mandatory BMSTU
-% title-page form is intentionally left to the current faculty/program form.
-\newcommand{\bmstuTitleBlock}[4]{%
-  \begin{center}
-    #1\par
-    \vspace{1.5\baselineskip}
-    #2\par
-    \vfill
-    {\bfseries #3\par}
-    \vspace{1.5\baselineskip}
-    #4\par
-  \end{center}
+% --------------------------------------------------------------------------
+% Underline helpers from the upstream title-page form
+% --------------------------------------------------------------------------
+\providecommand{\longunderline}[1]{%
+	\uline{#1\hfill\mbox{}}%
 }
+
+\providecommand{\fixunderline}[3]{%
+	$\underset{\text{#3}}{%
+			\text{\uline{%
+					\stackengine{0pt}{\hspace{#2}}{\text{#1}}{O}{c}{F}{F}{L}%
+				}}%
+		}$
+}
+
+% --------------------------------------------------------------------------
+% Horizontal rule helper
+% --------------------------------------------------------------------------
+\newcommand{\bmstusob@vhrulefill}[1]{%
+	\leavevmode\leaders\hrule\@height#1\hfill\kern\z@%
+}
+\providecommand{\vhrulefill}[1]{\bmstusob@vhrulefill{#1}}
+
+% --------------------------------------------------------------------------
+% Header of the title page
+% --------------------------------------------------------------------------
+% The upstream package uses wrapfigure for the logo. Here the same visual
+% arrangement is implemented with two fixed-width minipages. This keeps the
+% logo and the institution block independent and stable under XeLaTeX.
+\newcommand{\titlepageheader}[2]{%
+	\noindent
+	\begin{minipage}[t]{0.18\textwidth}%
+		\centering
+		\vspace{1mm}%
+		\IfFileExists{bmstu-logo.pdf}{%
+			\includegraphics[width=0.78\linewidth]{bmstu-logo.pdf}%
+		}{%
+			\rule{0pt}{22mm}%
+		}%
+	\end{minipage}%
+	\hfill
+	\begin{minipage}[t]{0.79\textwidth}%
+		\centering
+		{\fontsize{11}{13}\selectfont\bmstusob@mainfont
+			Министерство науки и высшего образования Российской Федерации\\
+			Федеральное государственное автономное образовательное учреждение\\
+			высшего образования\\
+			«Московский государственный технический университет\\
+			имени Н.~Э.~Баумана\\
+			(национальный исследовательский университет)»\\
+			(МГТУ им. Н.~Э.~Баумана)\\
+		}
+	\end{minipage}%
+
+	\vspace{2.5mm}%
+	{\noindent\hrule height 0.9pt}\par
+	\vspace{0.7mm}%
+	{\noindent\hrule height 0.25pt}\par
+	\vspace{2.8mm}%
+	{\fontsize{12}{14.4}\selectfont\bmstusob@mainfont
+		ФАКУЛЬТЕТ\ \longunderline{«#1»}\\
+		\vspace{3.3mm}%
+		КАФЕДРА\ \longunderline{«#2»}\\
+	}%
+}
+
+% --------------------------------------------------------------------------
+% Title blocks
+% --------------------------------------------------------------------------
+\newcommand{\titlepagereporttitle}[4]{%
+	{\fontsize{18}{21}\selectfont\bfseries\bmstusob@mainfont
+		ОТЧЕТ\par
+	}%
+	\vspace{1.2mm}%
+	{\fontsize{14}{21}\selectfont\bmstusob@mainfont
+		по #1\\
+		\ifthenelse{\isempty{#2}}{}{по курсу «#2»\\}%
+		\ifthenelse{\isempty{#3}}{}{на тему: «#3»\\}%
+		\ifthenelse{\isempty{#4}}{}{Вариант №~#4\\}%
+	}%
+}
+
+\newcommand{\titlepageresearchtitle}[1]{%
+	{\fontsize{18}{21}\selectfont\bfseries\bmstusob@mainfont
+		РАСЧЕТНО-ПОЯСНИТЕЛЬНАЯ ЗАПИСКА\par
+	}%
+	\vspace{5mm}%
+	{\fontsize{14}{21}\selectfont\itshape\bmstusob@mainfont
+		К НАУЧНО-ИССЛЕДОВАТЕЛЬСКОЙ РАБОТЕ\\
+		\vspace{5mm}%
+		НА ТЕМУ:\\
+		\vspace{5mm}%
+		«#1»\\
+	}%
+}
+
+\newcommand{\titlepagenotetitle}[2]{%
+	{\fontsize{18}{21}\selectfont\bfseries\bmstusob@mainfont
+		РАСЧЕТНО-ПОЯСНИТЕЛЬНАЯ ЗАПИСКА\par
+	}%
+	\vspace{5mm}%
+	{\fontsize{14}{21}\selectfont\itshape\bmstusob@mainfont
+		#1\\
+		\vspace{5mm}%
+		НА ТЕМУ:\\
+		\vspace{5mm}%
+		«#2»\\
+	}%
+}
+
+% --------------------------------------------------------------------------
+% Author/signature block
+% --------------------------------------------------------------------------
+\newcommand{\bmstusob@signaturewidth}{30mm}
+
+\newcommand*{\titlepagestudentscontent}{}
+
+\newcommand{\maketitlepagestudent}[1]{%
+	\foreach \s/\g in {#1}{%
+			\gappto\titlepagestudentscontent{Студент \fixunderline}%
+			\xappto\titlepagestudentscontent{{\g}}%
+			\gappto\titlepagestudentscontent{{23mm}{(Группа)} &}%
+			\gappto\titlepagestudentscontent{\fixunderline{}{\bmstusob@signaturewidth}{(Подпись, дата)} &}%
+			\gappto\titlepagestudentscontent{\fixunderline}%
+			\xappto\titlepagestudentscontent{{\s}}%
+			\gappto\titlepagestudentscontent{{\bmstusob@signaturewidth}{(И.~О.~Фамилия)} \\
+			}%
+		}%
+}
+
+\newcommand*{\titlepageotherscontent}{}
+
+\newcommand{\maketitlepageothers}[2]{%
+	\foreach \c in {#2}{%
+			\gappto\titlepageotherscontent{#1 &}%
+			\gappto\titlepageotherscontent{\fixunderline{}{\bmstusob@signaturewidth}{(Подпись, дата)} &}%
+			\gappto\titlepageotherscontent{\fixunderline}%
+			\xappto\titlepageotherscontent{{\c}}%
+			\gappto\titlepageotherscontent{{\bmstusob@signaturewidth}{(И.~О.~Фамилия)} \\
+			}%
+		}%
+}
+
+\newcommand{\titlepageauthors}[5]{%
+	{%
+		\renewcommand{\titlepagestudentscontent}{}%
+		\maketitlepagestudent{#1}%
+
+		\renewcommand{\titlepageotherscontent}{}%
+		\maketitlepageothers{#2}{#3}%
+		\maketitlepageothers{Консультант}{#4}%
+		\maketitlepageothers{Нормоконтролер}{#5}%
+
+		\fontsize{12}{14.4}\selectfont\bmstusob@mainfont
+		\setlength{\tabcolsep}{2pt}%
+		\begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}c@{\extracolsep{\fill}}l@{}}%
+			\titlepagestudentscontent
+			\titlepageotherscontent
+		\end{tabular*}%
+	}%
+}
+
+% --------------------------------------------------------------------------
+% Common title-page environment
+% --------------------------------------------------------------------------
+\newenvironment{bmstutitlepage}{%
+	\clearpage
+	\thispagestyle{bmstu-firstpage}%
+	\begingroup
+	\setlength{\parindent}{0pt}%
+	\setlength{\parskip}{0pt}%
+	\fontsize{14}{21}\selectfont\bmstusob@mainfont
+}{%
+	\par
+	\endgroup
+	\clearpage
+	\setcounter{page}{2}%
+}
+
+% Compatibility helper from the first bmstu-sob title module.
+\newcommand{\bmstuTitleBlock}[4]{%
+	\begin{center}
+		#1\par
+		\vspace{1.5\baselineskip}
+		#2\par
+		\vfill
+		{\bfseries #3\par}
+		\vspace{1.5\baselineskip}
+		#4\par
+	\end{center}%
+}
+
+% --------------------------------------------------------------------------
+% Stable centered year line
+% --------------------------------------------------------------------------
+% Explicit hbox centering prevents tabular alignment parameters from
+% affecting the final year line on the title page.
+\newcommand{\bmstusob@yearline}{%
+	\par
+	\hsize=\textwidth
+	\linewidth=\textwidth
+	\leftskip=0pt
+	\rightskip=0pt
+	\noindent
+	\hbox to \hsize{%
+		\hfil
+		{\fontsize{14}{21}\selectfont\itshape\bmstusob@mainfont\the\year~г.}%
+		\hfil
+	}%
+	\par
+}
+
+% --------------------------------------------------------------------------
+% Public title-page commands
+% --------------------------------------------------------------------------
+\newcommand{\makereporttitle}[8]{%
+	\documentmeta{Отчет}{#7}{по #3 по курсу #4}{#5}%
+	\begin{bmstutitlepage}
+		\centering
+		\titlepageheader{#1}{#2}%
+		\vspace{15.8mm}%
+		\titlepagereporttitle{#3}{#4}{#5}{#6}%
+		\vfill
+		\titlepageauthors{#7}{Преподаватель}{#8}{}{}%
+		\vspace{14mm}%
+		\bmstusob@yearline
+	\end{bmstutitlepage}%
+}
+
+\newcommand{\makecourseworktitle}[6]{%
+	\documentmeta{РПЗ к КР}{#4}{}{#3}%
+	\begin{bmstutitlepage}
+		\centering
+		\titlepageheader{#1}{#2}%
+		\vspace{15.8mm}%
+		\titlepagenotetitle{К КУРСОВОЙ РАБОТЕ}{#3}%
+		\vfill
+		\titlepageauthors{#4}{Руководитель курсовой работы}{#5}{#6}{}%
+		\vspace{14mm}%
+		\bmstusob@yearline
+	\end{bmstutitlepage}%
+}
+
+\newcommand{\makeresearchtitle}[6]{%
+	\documentmeta{Отчет по НИР}{#4}{}{#3}%
+	\begin{bmstutitlepage}
+		\centering
+		\titlepageheader{#1}{#2}%
+		\vspace{15.8mm}%
+		\titlepageresearchtitle{#3}%
+		\vfill
+		\titlepageauthors{#4}{Руководитель НИР}{#5}{#6}{}%
+		\vspace{14mm}%
+		\bmstusob@yearline
+	\end{bmstutitlepage}%
+}
+
+\newcommand{\makethesistitle}[7]{%
+	\documentmeta{РПЗ к ВКР}{#4}{}{#3}%
+	\begin{bmstutitlepage}
+		\centering
+		\titlepageheader{#1}{#2}%
+		\vspace{15.8mm}%
+		\titlepagenotetitle{К ВЫПУСКНОЙ КВАЛИФИКАЦИОННОЙ РАБОТЕ}{#3}%
+		\vfill
+		\titlepageauthors{#4}{Руководитель ВКР}{#5}{#6}{#7}%
+		\vspace{14mm}%
+		\bmstusob@yearline
+	\end{bmstutitlepage}%
+}
+
 \makeatother
 \endinput
